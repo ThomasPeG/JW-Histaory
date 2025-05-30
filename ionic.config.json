@@ -1,0 +1,7 @@
+{
+  "name": "JWHistory",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
