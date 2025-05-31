@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  //apiUrl: 'https://jwhistoryback.onrender.com/api', // URL de producción
+  apiUrl: 'http://localhost:3000/api' // URL de prueba local
 };
 
 /*

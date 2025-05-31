@@ -1,19 +1,28 @@
 import { Component } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
-  standalone: false,
+  standalone: true,
+  imports: [IonicModule, CommonModule, RouterLink, RouterLinkActive]
 })
 export class AppComponent {
   public appPages = [
-    { title: 'Inbox', url: '/folder/inbox', icon: 'mail' },
-    { title: 'Outbox', url: '/folder/outbox', icon: 'paper-plane' },
-    { title: 'Favorites', url: '/folder/favorites', icon: 'heart' },
-    { title: 'Archived', url: '/folder/archived', icon: 'archive' },
-    { title: 'Trash', url: '/folder/trash', icon: 'trash' },
-    { title: 'Spam', url: '/folder/spam', icon: 'warning' },
+    { title: 'Inicio', url: '/inicio', icon: 'home' },
+    { title: 'Primera Visita', url: '/primera-visita', icon: 'person-add' },
+    { title: 'Revisita', url: '/revisita', icon: 'people' },
+    { title: 'Studio', url: '/studio', icon: 'business' },
+    { title: 'Informe Mes', url: '/informe-mes', icon: 'calendar' },
+    { title: 'Por Investigar', url: '/por-investigar', icon: 'search' },
   ];
-  public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
-  constructor() {}
+  public labels = ['JWHistory'];
+  
+  constructor() {
+  }
+
+  
 }
