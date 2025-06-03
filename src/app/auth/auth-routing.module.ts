@@ -21,12 +21,12 @@ const routes: Routes = [
       {
         path: 'login',
         component: LoginComponent,
-        canActivate: []
+        canActivate: [NoAuthGuard]
       },
       {
         path: 'register',
         component: RegisterComponent,
-        canActivate: []
+        canActivate: [NoAuthGuard]
       },
       {
         path: 'perfil',
