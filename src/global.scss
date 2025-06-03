@@ -178,7 +178,7 @@ $secondary-color: var(--ion-color-secondary);
 
 /* Prevenir problemas de foco en páginas ocultas */
 .ion-page-hidden {
-  inert: auto;
+  inset: auto;
 }
 
 /* Estilos para modales de formulario */
@@ -233,7 +233,7 @@ app-visita-form {
 }
 /* Prevenir problemas de foco en páginas ocultas */
 .ion-page-hidden {
-  inert: auto;
+  inset: auto;
 }
 /* Estilos para modales de formulario */
 .fullscreen-modal {
@@ -374,7 +374,7 @@ app-visita-form {
 
 /* Prevenir problemas de foco en páginas ocultas */
 .ion-page-hidden {
-  inert: auto;
+  inset: auto;
 }
 
 /* Estilos para modales de formulario */
@@ -429,7 +429,7 @@ app-visita-form {
 }
 /* Prevenir problemas de foco en páginas ocultas */
 .ion-page-hidden {
-  inert: auto;
+  inset: auto;
 }
 /* Estilos para modales de formulario */
 .fullscreen-modal {
@@ -450,6 +450,3 @@ app-visita-form {
       --padding-bottom: 50px;
     }
   }
-
-
-  
