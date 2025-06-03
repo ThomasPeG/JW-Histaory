@@ -13,7 +13,10 @@ import { AuthService } from '../services/auth.service';
   imports: [IonicModule, CommonModule, ReactiveFormsModule]
 })
 export class LoginComponent implements OnInit {
-  loginForm: FormGroup;
+  loginForm: FormGroup = this.formBuilder.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required]]
+  });
   isSubmitting = false;
 
   constructor(
@@ -22,10 +25,6 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private toastController: ToastController
   ) {
-    this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]]
-    });
   
   }
 
