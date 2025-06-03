@@ -3,14 +3,284 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>primera-visita</ion-title>
+    <ion-title>Primera Visita</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openHelpDialog()">
+        <ion-icon name="help-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">primera-visita</ion-title>
+      <ion-title size="large">Primera Visita</ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <div class="ion-padding">
+    <!-- Botón para agregar nuevo amo -->
+    <ion-button expand="block" (click)="openNewAmoModal()" class="nuevo-amo-btn">
+      <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+      Nuevo Amo
+    </ion-button>
+    
+    <!-- Indicador de carga -->
+    <div class="loading-container" *ngIf="loading">
+      <ion-spinner></ion-spinner>
+      <p>Cargando información...</p>
+    </div>
+    
+    <!-- Mensaje de error -->
+    <ion-text color="danger" *ngIf="error">
+      <p>{{ error }}</p>
+    </ion-text>
+    
+    <!-- Sin resultados -->
+    <ion-text *ngIf="!loading && !error && amos.length === 0">
+      <p>No hay visitas registradas.</p>
+    </ion-text>
+    
+    <!-- Tabla de amos -->
+    <div class="table-container" *ngIf="!loading && !error && amos.length > 0">
+      <table class="amos-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Dirección</th>
+            <th>Próxima Visita</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let amo of amos">
+            <!-- Fila principal (siempre visible) -->
+            <tr class="amo-row">
+              <td>{{ amo.names }}</td>
+              <td>{{ amo.address }}</td>
+              <td>
+                <div *ngIf="getDiasRestantes(amo) !== null" 
+                     [ngClass]="getColorClase(getDiasRestantes(amo))" 
+                     class="dias-restantes">
+                  {{ getDiasRestantes(amo) }} días
+                </div>
+                <div *ngIf="getDiasRestantes(amo) === null" class="sin-fecha">
+                  No programada
+                </div>
+              </td>
+              <td>
+                <ion-icon 
+                  [name]="isExpanded(amo._id) ? 'chevron-up' : 'chevron-down'" 
+                  class="expand-icon" 
+                  (click)="toggleDetails(amo._id)">
+                </ion-icon>
+              </td>
+            </tr>
+            <!-- Fila de detalles (expandible) -->
+            <tr *ngIf="isExpanded(amo._id)" class="details-row">
+              <td colspan="4">
+                <div class="expanded-details">
+                  <ion-grid>
+                    <ion-row *ngIf="amo.personalData">
+                      <ion-col size="4" class="label-col">Datos Personales:</ion-col>
+                      <ion-col size="8">{{ amo.personalData }}</ion-col>
+                    </ion-row>
+                    <ion-row *ngIf="amo.visit[0]?.date">
+                      <ion-col size="4" class="label-col">Fecha de la visita:</ion-col>
+                      <ion-col size="8">{{ amo.visit[0].date | date:'dd/MM/yyyy' }}</ion-col>
+                    </ion-row>
+                    <ion-row *ngIf="amo.visit[0]?.nextVisitDate">
+                      <ion-col size="4" class="label-col">Próxima visita:</ion-col>
+                      <ion-col size="8">{{ amo.visit[0].nextVisitDate | date:'dd/MM/yyyy' }}</ion-col>
+                    </ion-row>
+                    <ion-row *ngIf="amo.visit[0]?.initialQuestion">
+                      <ion-col size="4" class="label-col">Pregunta analizada:</ion-col>
+                      <ion-col size="8">{{ amo.visit[0].initialQuestion }}</ion-col>
+                    </ion-row>
+                    <ion-row *ngIf="amo.visit[0]?.pendingQuestion">
+                      <ion-col size="4" class="label-col">Pregunta pendiente:</ion-col>
+                      <ion-col size="8">{{ amo.visit[0].pendingQuestion }}</ion-col>
+                    </ion-row>          
+                  </ion-grid>
+                  <div class="action-buttons">
+                    <ion-button size="small" fill="outline" (click)="openRevisitaModal(amo)">
+                      <ion-icon name="create-outline" slot="start"></ion-icon>
+                      Agregar Revisita
+                    </ion-button>
+                    <ion-button size="small" fill="outline" color="secondary" [routerLink]="['/amo', amo._id]">
+                      <ion-icon name="eye-outline" slot="start"></ion-icon>
+                      Ver Detalles
+                    </ion-button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Modal para nuevo amo -->
+  <ion-modal [isOpen]="isModalOpen" (didDismiss)="closeModal()" >
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Nuevo Amo</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeModal()">
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form [formGroup]="amoForm" (ngSubmit)="submitForm()" class="form-container">
+          <!-- Sección: Información básica -->
+          <div class="form-section">
+            <h2 class="section-title">Información Del Amo</h2>
+            
+            <ion-item class="custom-item">
+              <ion-label position="stacked">Nombre</ion-label>
+              <ion-input formControlName="names" type="text" placeholder="Ingrese el nombre"></ion-input>
+            </ion-item>
+            <ion-note color="danger" *ngIf="amoForm.get('names')?.touched && amoForm.get('names')?.errors?.['required']">
+              El nombre es requerido
+            </ion-note>
+            
+            <ion-item class="custom-item">
+              <ion-label position="stacked">Dirección</ion-label>
+              <ion-input formControlName="address" type="text" placeholder="Ingrese la dirección"></ion-input>
+            </ion-item>
+            <ion-note color="danger" *ngIf="amoForm.get('address')?.touched && amoForm.get('address')?.errors?.['required']">
+              La dirección es requerida
+            </ion-note>
+            
+            <ion-item class="custom-item">
+              <ion-label position="stacked">Creencias</ion-label>
+              <ion-select formControlName="personType" interface="popover">
+                <ion-select-option value="ateo">Ateo</ion-select-option>
+                <ion-select-option value="cristiano">Cristiano</ion-select-option>
+                <ion-select-option value="catolico">Catolico</ion-select-option>
+                <ion-select-option value="otro">Otro</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-note color="danger" *ngIf="amoForm.get('personType')?.touched && amoForm.get('personType')?.errors?.['required']">
+              El tipo de persona es requerido
+            </ion-note>
+            
+            <ion-item class="custom-item">
+              <ion-label position="stacked">Datos personales (Opcional)</ion-label>
+              <ion-textarea formControlName="personalData" rows="2" placeholder="Información adicional relevante"></ion-textarea>
+            </ion-item>
+          </div>
+          
+          <!-- Sección: Información de la visita -->
+          <div class="form-section">
+            <h2 class="section-title">Información de la visita</h2>
+            
+            <!-- Fechas -->
+            <ion-item class="custom-item">
+              <ion-label position="stacked">Fecha de visita</ion-label>
+              <ion-datetime-button datetime="date"></ion-datetime-button>
+              <ion-modal [keepContentsMounted]="true">
+                <ng-template>
+                  <ion-datetime id="date" presentation="date" formControlName="date"></ion-datetime>
+                </ng-template>
+              </ion-modal>
+            </ion-item>
+            <ion-note color="danger" *ngIf="amoForm.get('date')?.touched && amoForm.get('date')?.errors?.['required']">
+              La fecha de visita es requerida
+            </ion-note>
+            
+            <ion-item class="custom-item">
+              <ion-label position="stacked">Fecha próxima visita</ion-label>
+              <div *ngIf="!skipNextVisit">
+                <ion-datetime-button datetime="nextVisitDate"></ion-datetime-button>
+                <ion-modal [keepContentsMounted]="true">
+                  <ng-template>
+                    <ion-datetime id="nextVisitDate" presentation="date" formControlName="nextVisitDate"></ion-datetime>
+                  </ng-template>
+                </ion-modal>
+              </div>
+              <ion-item lines="none" class="custom-item">
+                <ion-checkbox [(ngModel)]="skipNextVisit" [ngModelOptions]="{standalone: true}" (ionChange)="toggleNextVisitDate()">No programar</ion-checkbox>
+              </ion-item>
+            </ion-item>
+            <ion-note color="danger" *ngIf="!skipNextVisit && amoForm.get('nextVisitDate')?.touched && amoForm.get('nextVisitDate')?.errors?.['required']">
+              La fecha de próxima visita es requerida
+            </ion-note>
+            
+            <!-- Duración -->
+            <ion-item class="custom-item">
+              <ion-label position="stacked">Duración de la Visita (minutos)</ion-label>
+              <ion-input formControlName="duration" type="number" min="1" placeholder="Ej: 30"></ion-input>
+            </ion-item>
+            <ion-note color="danger" *ngIf="amoForm.get('duration')?.touched && amoForm.get('duration')?.errors?.['required']">
+              La duración es requerida
+            </ion-note>
+            <ion-note color="danger" *ngIf="amoForm.get('duration')?.touched && amoForm.get('duration')?.errors?.['min']">
+              La duración debe ser mayor a 0
+            </ion-note>
+            
+            <!-- Preguntas y notas -->
+            <ion-item class="custom-item">
+              <ion-label position="stacked">Pregunta inicial</ion-label>
+              <ion-textarea formControlName="initialQuestion" rows="2" placeholder="Pregunta analizada en la visita"></ion-textarea>
+            </ion-item>
+            <ion-note color="danger" *ngIf="amoForm.get('initialQuestion')?.touched && amoForm.get('initialQuestion')?.errors?.['required']">
+              La pregunta inicial es requerida
+            </ion-note>
+            
+            <ion-item class="custom-item">
+              <ion-label position="stacked">Inquietud del amo</ion-label>
+              <ion-textarea formControlName="ownerConcern" rows="2" placeholder="Inquietudes expresadas por el amo"></ion-textarea>
+            </ion-item>
+            
+            <ion-item class="custom-item">
+              <ion-label position="stacked">Pregunta pendiente</ion-label>
+              <ion-textarea formControlName="pendingQuestion" rows="2" placeholder="Pregunta para la próxima visita"></ion-textarea>
+            </ion-item>
+
+            <ion-item class="custom-item">
+              <ion-label position="stacked">Notas (Opcional)</ion-label>
+              <ion-textarea formControlName="notes" rows="3" placeholder="Observaciones adicionales"></ion-textarea>
+            </ion-item>
+          </div>
+          
+          <div class="form-actions">
+            <ion-button type="submit" expand="block" [disabled]="amoForm.invalid || isSubmitting">
+              {{ isSubmitting ? 'Guardando...' : 'Guardar Amo' }}
+            </ion-button>
+          </div>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>
+
+<!-- Modal para nueva revisita (usando el componente reutilizable) -->
+<ion-modal 
+  [isOpen]="isRevisitaModalOpen" 
+  (didDismiss)="closeRevisitaModal()"
+  [initialBreakpoint]="0.95"
+  handle="false"
+  class="fullscreen-modal"
+>
+  <ng-template>
+    <app-visita-form
+      [isSubmitting]="isSubmitting"
+      [title]="'Nueva Revisita'"
+      (formSubmit)="handleVisitSubmit($event)"
+      (cancelForm)="closeRevisitaModal()"
+    ></app-visita-form>
+  </ng-template>
+</ion-modal>
+
+<!-- Agregar al final del archivo -->
+<app-help-dialog 
+  [isOpen]="isHelpDialogOpen" 
+  title="Ayuda - Primera Visita" 
+  [content]="helpContent">
+</app-help-dialog>

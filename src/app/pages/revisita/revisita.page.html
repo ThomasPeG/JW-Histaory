@@ -3,14 +3,156 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>revisita</ion-title>
+    <ion-title>Revisita</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openHelpDialog()">
+        <ion-icon name="help-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">revisita</ion-title>
+      <ion-title size="large">Revisita</ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <div class="ion-padding">
+    <!-- Barra de búsqueda y botón de nueva revisita -->
+    <div class="search-container">
+      <ion-searchbar
+        placeholder="Buscar por nombre o dirección"
+        [(ngModel)]="searchTerm"
+        (ionInput)="filterAmos()"
+        animated="true"
+        showCancelButton="focus"
+      ></ion-searchbar>
+    </div>
+    
+    <!-- Indicador de carga -->
+    <div class="loading-container" *ngIf="loading">
+      <ion-spinner></ion-spinner>
+      <p>Cargando información...</p>
+    </div>
+    
+    <!-- Mensaje de error -->
+    <ion-text color="danger" *ngIf="error">
+      <p>{{ error }}</p>
+    </ion-text>
+    
+    <!-- Sin resultados -->
+    <ion-text *ngIf="!loading && !error && filteredAmos.length === 0">
+      <p>No hay revisitas que coincidan con la búsqueda.</p>
+    </ion-text>
+    
+    <!-- Tabla de revisitas -->
+    <div class="table-container" *ngIf="!loading && !error && filteredAmos.length > 0">
+      <table class="amos-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Dirección</th>
+            <th>Próxima Visita</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let amo of filteredAmos">
+            <!-- Fila principal (siempre visible) -->
+            <tr class="amo-row">
+              <td>{{ amo.names }}</td>
+              <td>{{ amo.address }}</td>
+              <td>
+                <div *ngIf="getDiasRestantes(amo) !== null" 
+                     [ngClass]="getColorClase(getDiasRestantes(amo))" 
+                     class="dias-restantes">
+                  {{ getDiasRestantes(amo) }} días
+                </div>
+                <div *ngIf="getDiasRestantes(amo) === null" class="sin-fecha">
+                  No programada
+                </div>
+              </td>
+              <td>
+                <ion-icon 
+                  [name]="isExpanded(amo._id) ? 'chevron-up' : 'chevron-down'" 
+                  class="expand-icon" 
+                  (click)="toggleDetails(amo._id)">
+                </ion-icon>
+              </td>
+            </tr>
+            <!-- Fila de detalles (expandible) -->
+            <tr *ngIf="isExpanded(amo._id)" class="details-row">
+              <td colspan="4">
+                <div class="expanded-details">
+                  <ion-grid>
+                    <ion-row *ngIf="amo.personalData">
+                      <ion-col size="4" class="label-col">Datos Personales:</ion-col>
+                      <ion-col size="8">{{ amo.personalData }}</ion-col>
+                    </ion-row>
+                    <ion-row>
+                      <ion-col size="4" class="label-col">Total de visitas:</ion-col>
+                      <ion-col size="8">{{ amo.visit.length }}</ion-col>
+                    </ion-row>
+                    <ion-row *ngIf="amo.visit && amo.visit.length > 0 && amo.visit[amo.visit.length - 1]?.date">
+                      <ion-col size="4" class="label-col">Fecha de la visita:</ion-col>
+                      <ion-col size="8">{{ amo.visit[amo.visit.length - 1].date | date:'dd/MM/yyyy' }}</ion-col>
+                    </ion-row>
+                    <ion-row *ngIf="amo.visit && amo.visit.length > 0 && amo.visit[amo.visit.length - 1]?.nextVisitDate">
+                      <ion-col size="4" class="label-col">Próxima visita:</ion-col>
+                      <ion-col size="8">{{ amo.visit[amo.visit.length - 1].nextVisitDate | date:'dd/MM/yyyy' }}</ion-col>
+                    </ion-row>
+                    <ion-row *ngIf="amo.visit && amo.visit.length > 0 && amo.visit[amo.visit.length - 1]?.initialQuestion">
+                      <ion-col size="4" class="label-col">Pregunta analizada:</ion-col>
+                      <ion-col size="8">{{ amo.visit[amo.visit.length - 1].initialQuestion }}</ion-col>
+                    </ion-row>
+                    <ion-row *ngIf="amo.visit && amo.visit.length > 0 && amo.visit[amo.visit.length - 1]?.pendingQuestion">
+                      <ion-col size="4" class="label-col">Pregunta pendiente:</ion-col>
+                      <ion-col size="8">{{ amo.visit[amo.visit.length - 1].pendingQuestion }}</ion-col>
+                    </ion-row>          
+                  </ion-grid>
+                  <div class="action-buttons">
+                    <ion-button size="small" fill="outline" (click)="openRevisitaModal(amo)">
+                      <ion-icon name="create-outline" slot="start"></ion-icon>
+                      Agregar Revisita
+                    </ion-button>
+                    <ion-button size="small" fill="outline" color="secondary" [routerLink]="['/amo', amo._id]">
+                      <ion-icon name="eye-outline" slot="start"></ion-icon>
+                      Ver Detalles
+                    </ion-button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Modal para nueva revisita (usando el componente reutilizable) -->
+  <ion-modal 
+    [isOpen]="isModalOpen" 
+    (didDismiss)="closeModal()"
+    [initialBreakpoint]="0.95"
+    handle="false"
+    class="fullscreen-modal"
+  >
+    <ng-template>
+      <app-visita-form
+        [isSubmitting]="isSubmitting"
+        [title]="editMode ? 'Editar Revisita' : 'Nueva Revisita'"
+        (formSubmit)="handleVisitSubmit($event)"
+        (cancelForm)="closeModal()"
+      ></app-visita-form>
+    </ng-template>
+  </ion-modal>
 </ion-content>
+
+<!-- Agregar al final del archivo -->
+<app-help-dialog 
+  [isOpen]="isHelpDialogOpen" 
+  title="Ayuda - Revisita" 
+  [content]="helpContent">
+</app-help-dialog>

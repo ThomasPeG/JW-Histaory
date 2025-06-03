@@ -1,3 +1,16 @@
+$border-radius-sm: 8px;
+$border-radius-md: 12px;
+$box-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+$box-shadow-md: 0 2px 5px rgba(0, 0, 0, 0.1);
+$padding-sm: 8px;
+$padding-md: 16px;
+$margin-sm: 8px;
+$margin-md: 16px;
+$card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+$border-radius: 8px;
+$primary-color: var(--ion-color-primary);
+$secondary-color: var(--ion-color-secondary);
+
 /*
  * App Global CSS
  * ----------------------------------------------------------------------------
@@ -35,5 +48,408 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
-/* Añade estos estilos al final del archivo */
 
+/* Estilos comunes reutilizables */
+
+// Contenedores
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.table-container {
+  overflow-x: auto;
+  width: 100%;
+  box-shadow: $box-shadow-md;
+  border-radius: $border-radius-sm;
+}
+
+// Tablas (modificar la sección existente)
+.amos-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  
+  th {
+    background-color: var(--ion-color-primary);
+    color: white;
+    text-align: left;
+    padding: 12px 15px;
+    font-weight: 500;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  
+  td {
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--ion-color-light);
+  }
+}
+
+// Contenedor de tabla con encabezado fijo (modificar la sección existente)
+.table-container {
+  overflow-x: auto;
+  width: 100%;
+  box-shadow: $box-shadow-md;
+  border-radius: $border-radius-sm;
+  max-height: calc(100vh - 200px); // Altura máxima para permitir scroll
+  overflow-y: auto;
+  position: relative; // Crear un nuevo contexto de apilamiento
+}
+
+// Barra de búsqueda fija (modificar la sección existente)
+.search-container {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background-color: var(--ion-background-color);
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  width: 100%; // Asegurar que ocupe todo el ancho
+}
+
+// Filas y detalles
+.amo-row {
+  transition: background-color 0.2s ease;
+  &:hover { background-color: var(--ion-color-light-shade); }
+}
+
+.expand-icon {
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--ion-color-primary);
+  padding: 5px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+  &:hover { background-color: var(--ion-color-light); }
+}
+
+.details-row { background-color: var(--ion-color-light-tint); }
+.expanded-details { 
+  padding: 10px 0; 
+  margin-top: 10px;
+  border-top: 1px solid var(--ion-color-light);
+  padding-top: 10px;
+}
+
+// Etiquetas y tarjetas
+.label-col {
+  font-weight: 500;
+  color: var(--ion-color-medium);
+}
+
+// Formularios
+.form-container { max-width: 600px; margin: 0 auto; padding: 0 $padding-md; }
+
+.form-section {
+  margin-bottom: 24px;
+  background-color: var(--ion-color-light-tint);
+  border-radius: $border-radius-md;
+  padding: $padding-md;
+  box-shadow: $box-shadow-sm;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--ion-color-primary);
+}
+
+.form-actions {
+  margin-top: 24px;
+}
+
+.custom-item {
+  --background: transparent;
+  --padding-start: $padding-sm;
+  --padding-end: $padding-sm;
+  --padding-top: $padding-sm;
+  --padding-bottom: $padding-sm;
+  --border-color: var(--ion-color-light-shade);
+  margin-bottom: 12px;
+  border-radius: $border-radius-sm;
+}
+
+/* Prevenir problemas de foco en páginas ocultas */
+.ion-page-hidden {
+  inert: auto;
+}
+
+/* Estilos para modales de formulario */
+.fullscreen-modal {
+  --height: 100%;
+  --width: 100%;
+  
+  ion-content {
+    --padding-bottom: 50px;
+  }
+}
+
+/* Asegurar que el contenido del formulario sea scrollable */
+app-visita-form {
+  display: block;
+  height: 100%;
+  
+  ion-content {
+    --padding-bottom: 50px;
+  }
+}
+
+// Indicadores de días
+.dias-urgente {
+  color: var(--ion-color-danger);
+  font-weight: bold;
+}
+
+.dias-proximo {
+  color: var(--ion-color-warning);
+  font-weight: bold;
+}
+
+.dias-normal {
+  color: var(--ion-color-success);
+}
+
+.sin-fecha {
+  color: var(--ion-color-medium);
+  font-style: italic;
+}
+
+.custom-item {
+  --background: transparent;
+  --padding-start: $padding-sm;
+  --padding-end: $padding-sm;
+  --padding-top: $padding-sm;
+  --padding-bottom: $padding-sm;
+  --border-color: var(--ion-color-light-shade);
+  margin-bottom: 12px;
+  border-radius: $border-radius-sm;
+}
+/* Prevenir problemas de foco en páginas ocultas */
+.ion-page-hidden {
+  inert: auto;
+}
+/* Estilos para modales de formulario */
+.fullscreen-modal {
+    --height: 100%;
+    --width: 100%;
+    
+    ion-content {
+      --padding-bottom: 50px;
+    }
+  }
+  
+  /* Asegurar que el contenido del formulario sea scrollable */
+  app-visita-form {
+    display: block;
+    height: 100%;
+    
+    ion-content {
+      --padding-bottom: 50px;
+    }
+  }
+
+// Añadir al final del archivo
+
+// Mejoras para elementos sticky
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background-color: var(--ion-background-color);
+}
+
+// Tablas con encabezados fijos
+.amos-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  
+  th {
+    background-color: var(--ion-color-primary);
+    color: white;
+    text-align: left;
+    padding: 12px 15px;
+    font-weight: 500;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  
+  td {
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--ion-color-light);
+  }
+}
+
+// Contenedor de tabla con encabezado fijo
+.table-container {
+  overflow-x: auto;
+  width: 100%;
+  box-shadow: $box-shadow-md;
+  border-radius: $border-radius-sm;
+  max-height: calc(100vh - 200px); // Altura máxima para permitir scroll
+  overflow-y: auto;
+}
+
+// Barra de búsqueda fija
+.search-container {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background-color: var(--ion-background-color);
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+// Filas y detalles
+.amo-row {
+  transition: background-color 0.2s ease;
+  &:hover { background-color: var(--ion-color-light-shade); }
+}
+
+.expand-icon {
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--ion-color-primary);
+  padding: 5px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+  &:hover { background-color: var(--ion-color-light); }
+}
+
+.details-row { background-color: var(--ion-color-light-tint); }
+.expanded-details { 
+  padding: 10px 0; 
+  margin-top: 10px;
+  border-top: 1px solid var(--ion-color-light);
+  padding-top: 10px;
+}
+
+// Etiquetas y tarjetas
+.label-col {
+  font-weight: 500;
+  color: var(--ion-color-medium);
+}
+
+// Formularios
+.form-container { max-width: 600px; margin: 0 auto; padding: 0 $padding-md; }
+
+.form-section {
+  margin-bottom: 24px;
+  background-color: var(--ion-color-light-tint);
+  border-radius: $border-radius-md;
+  padding: $padding-md;
+  box-shadow: $box-shadow-sm;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--ion-color-primary);
+}
+
+.form-actions {
+  margin-top: 24px;
+}
+
+.custom-item {
+  --background: transparent;
+  --padding-start: $padding-sm;
+  --padding-end: $padding-sm;
+  --padding-top: $padding-sm;
+  --padding-bottom: $padding-sm;
+  --border-color: var(--ion-color-light-shade);
+  margin-bottom: 12px;
+  border-radius: $border-radius-sm;
+}
+
+/* Prevenir problemas de foco en páginas ocultas */
+.ion-page-hidden {
+  inert: auto;
+}
+
+/* Estilos para modales de formulario */
+.fullscreen-modal {
+  --height: 100%;
+  --width: 100%;
+  
+  ion-content {
+    --padding-bottom: 50px;
+  }
+}
+
+/* Asegurar que el contenido del formulario sea scrollable */
+app-visita-form {
+  display: block;
+  height: 100%;
+  
+  ion-content {
+    --padding-bottom: 50px;
+  }
+}
+
+// Indicadores de días
+.dias-urgente {
+  color: var(--ion-color-danger);
+  font-weight: bold;
+}
+
+.dias-proximo {
+  color: var(--ion-color-warning);
+  font-weight: bold;
+}
+
+.dias-normal {
+  color: var(--ion-color-success);
+}
+
+.sin-fecha {
+  color: var(--ion-color-medium);
+  font-style: italic;
+}
+
+.custom-item {
+  --background: transparent;
+  --padding-start: $padding-sm;
+  --padding-end: $padding-sm;
+  --padding-top: $padding-sm;
+  --padding-bottom: $padding-sm;
+  --border-color: var(--ion-color-light-shade);
+  margin-bottom: 12px;
+  border-radius: $border-radius-sm;
+}
+/* Prevenir problemas de foco en páginas ocultas */
+.ion-page-hidden {
+  inert: auto;
+}
+/* Estilos para modales de formulario */
+.fullscreen-modal {
+    --height: 100%;
+    --width: 100%;
+    
+    ion-content {
+      --padding-bottom: 50px;
+    }
+  }
+  
+  /* Asegurar que el contenido del formulario sea scrollable */
+  app-visita-form {
+    display: block;
+    height: 100%;
+    
+    ion-content {
+      --padding-bottom: 50px;
+    }
+  }
+
+
+  

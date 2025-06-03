@@ -3,14 +3,45 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>studio</ion-title>
+    <ion-title>Estudio</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openHelpDialog()">
+        <ion-icon name="help-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">studio</ion-title>
+      <ion-title size="large">Estudio</ion-title>
     </ion-toolbar>
   </ion-header>
+  
+  <div class="ion-padding">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Sección en desarrollo</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Esta sección te permitirá gestionar tus estudios bíblicos de manera eficiente.</p>
+        <p>Próximamente podrás:</p>
+        <ul>
+          <li>Registrar nuevos estudiantes de la Biblia</li>
+          <li>Dar seguimiento al progreso de cada estudio</li>
+          <li>Programar las próximas sesiones</li>
+          <li>Tomar notas sobre cada lección</li>
+          <li>Registrar preguntas y temas de interés</li>
+        </ul>
+      </ion-card-content>
+    </ion-card>
+  </div>
+  
+  <!-- Componente de diálogo de ayuda -->
+  <app-help-dialog 
+    [title]="'Ayuda - Estudio'" 
+    [content]="helpContent" 
+    [isOpen]="isHelpDialogOpen">
+  </app-help-dialog>
 </ion-content>

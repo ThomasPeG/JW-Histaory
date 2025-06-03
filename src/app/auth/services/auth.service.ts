@@ -63,6 +63,20 @@ export class AuthService {
     const user = localStorage.getItem(this.userKey);
     return user ? JSON.parse(user) : null;
   }
+  getUserId(): string | null {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const userData = localStorage.getItem(this.userKey);
+      if (!userData) return null;
+      
+      try {
+        const user = JSON.parse(userData);
+        return user._id;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
 
   hasUser(): boolean {
     return !!this.getUser();
@@ -77,5 +91,7 @@ export class AuthService {
     const isAuthenticated = this.hasUser();
     this.isAuthenticatedSubject.next(isAuthenticated);
     console.log('Estado de autenticación:', isAuthenticated);
+    console.log('API URL:', this.apiUrl);
+    console.log('Usuario almacenado:', this.getUser());
   }
 }

@@ -1,0 +1,13 @@
+<div class="help-dialog-overlay" [class.active]="isOpen" (click)="closeDialog()"></div>
+<div class="help-dialog" [class.active]="isOpen">
+  <div class="help-dialog-header">
+    <h2>{{ title }}</h2>
+    <ion-button fill="clear" (click)="closeDialog()">
+      <ion-icon name="close-outline"></ion-icon>
+    </ion-button>
+  </div>
+  <div class="help-dialog-content" [innerHTML]="content"></div>
+  <div class="help-dialog-footer">
+    <ion-button expand="block" (click)="closeDialog()">Entendido</ion-button>
+  </div>
+</div>

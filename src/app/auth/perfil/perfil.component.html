@@ -1,0 +1,93 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Mi Perfil</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleEditing()" *ngIf="!isEditing">
+        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="toggleEditing()" *ngIf="isEditing" color="danger">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Mi Perfil</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="ion-padding">
+    <div class="profile-container">
+      <!-- Avatar del usuario -->
+      <div class="avatar-container">
+        <ion-avatar>
+          <img alt="Foto de perfil" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+        </ion-avatar>
+        <h2 class="ion-text-center">{{ usuario?.name }}</h2>
+      </div>
+
+      <!-- Información del perfil -->
+      <div class="profile-info" *ngIf="!isEditing">
+        <ion-list>
+          <ion-item>
+            <ion-label>
+              <h3>Nombre</h3>
+              <p>{{ usuario?.name }}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <h3>Email</h3>
+              <p>{{ usuario?.email }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+
+      <!-- Formulario de edición -->
+      <div class="profile-edit" *ngIf="isEditing">
+        <form [formGroup]="perfilForm" (ngSubmit)="guardarCambios()">
+          <ion-item>
+            <ion-label position="floating">Nombre</ion-label>
+            <ion-input formControlName="name" type="text"></ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="perfilForm.get('name')?.touched && perfilForm.get('name')?.errors?.['required']">
+            El nombre es requerido
+          </ion-note>
+
+          <ion-item>
+            <ion-label position="floating">Email</ion-label>
+            <ion-input formControlName="email" type="email"></ion-input>
+          </ion-item>
+          <ion-note color="danger" *ngIf="perfilForm.get('email')?.touched && perfilForm.get('email')?.errors?.['required']">
+            El email es requerido
+          </ion-note>
+          <ion-note color="danger" *ngIf="perfilForm.get('email')?.touched && perfilForm.get('email')?.errors?.['email']">
+            Ingresa un email válido
+          </ion-note>
+
+          <div class="ion-padding-top">
+            <ion-button expand="block" type="submit" [disabled]="perfilForm.invalid || isSubmitting">
+              <ion-spinner name="crescent" *ngIf="isSubmitting"></ion-spinner>
+              <span *ngIf="!isSubmitting">Guardar Cambios</span>
+            </ion-button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Botón de cerrar sesión -->
+      <div class="logout-button ion-padding-top">
+        <ion-button expand="block" color="danger" (click)="cerrarSesion()">
+          <ion-icon name="log-out-outline" slot="start"></ion-icon>
+          Cerrar Sesión
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>

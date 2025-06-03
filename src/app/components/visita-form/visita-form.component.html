@@ -1,0 +1,94 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ title }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="visitaForm" (ngSubmit)="submitForm()" class="form-container">
+    <!-- Sección: Información de la visita -->
+    <div class="form-section">
+      <h2 class="section-title">Información de la visita</h2>
+      
+      <!-- Fechas -->
+      <ion-item class="custom-item">
+        <ion-label position="stacked">Fecha de visita</ion-label>
+        <ion-datetime-button datetime="date"></ion-datetime-button>
+        <ion-modal [keepContentsMounted]="true">
+          <ng-template>
+            <ion-datetime id="date" presentation="date" formControlName="date"></ion-datetime>
+          </ng-template>
+        </ion-modal>
+      </ion-item>
+      <ion-note color="danger" *ngIf="visitaForm.get('date')?.touched && visitaForm.get('date')?.errors?.['required']">
+        La fecha de visita es requerida
+      </ion-note>
+      
+      <ion-item class="custom-item">
+        <ion-label position="stacked">Fecha próxima visita</ion-label>
+        <div *ngIf="!skipNextVisit">
+          <ion-datetime-button datetime="nextVisitDate"></ion-datetime-button>
+          <ion-modal [keepContentsMounted]="true">
+            <ng-template>
+              <ion-datetime id="nextVisitDate" presentation="date" formControlName="nextVisitDate"></ion-datetime>
+            </ng-template>
+          </ion-modal>
+        </div>
+        <ion-item lines="none" class="custom-item">
+          <ion-checkbox [(ngModel)]="skipNextVisit" [ngModelOptions]="{standalone: true}" (ionChange)="toggleNextVisitDate()">No programar</ion-checkbox>
+        </ion-item>
+      </ion-item>
+      <ion-note color="danger" *ngIf="!skipNextVisit && visitaForm.get('nextVisitDate')?.touched && visitaForm.get('nextVisitDate')?.errors?.['required']">
+        La fecha de próxima visita es requerida
+      </ion-note>
+      
+      <!-- Duración -->
+      <ion-item class="custom-item">
+        <ion-label position="stacked">Duración de la Visita (minutos)</ion-label>
+        <ion-input formControlName="duration" type="number" min="1" placeholder="Ej: 30"></ion-input>
+      </ion-item>
+      <ion-note color="danger" *ngIf="visitaForm.get('duration')?.touched && visitaForm.get('duration')?.errors?.['required']">
+        La duración es requerida
+      </ion-note>
+      <ion-note color="danger" *ngIf="visitaForm.get('duration')?.touched && visitaForm.get('duration')?.errors?.['min']">
+        La duración debe ser mayor a 0
+      </ion-note>
+      
+      <!-- Preguntas y notas -->
+      
+      <ion-item class="custom-item">
+        <ion-label position="stacked">Respuesta analizada</ion-label>
+        <ion-textarea formControlName="initialQuestion" rows="2" placeholder="Respuesta analizada en esta visita"></ion-textarea>
+      </ion-item>
+      <ion-note color="danger" *ngIf="visitaForm.get('initialQuestion')?.touched && visitaForm.get('initialQuestion')?.errors?.['required']">
+        La respuesta analizada es requerida
+      </ion-note>
+      
+      <ion-item class="custom-item">
+        <ion-label position="stacked">Inquietud del amo</ion-label>
+        <ion-textarea formControlName="ownerConcern" rows="2" placeholder="Inquietudes expresadas por el amo"></ion-textarea>
+      </ion-item>
+      
+      <ion-item class="custom-item">
+        <ion-label position="stacked">Nueva pregunta pendiente</ion-label>
+        <ion-textarea formControlName="newPendingQuestion" rows="2" placeholder="Pregunta para la próxima visita"></ion-textarea>
+      </ion-item>
+
+      <ion-item class="custom-item">
+        <ion-label position="stacked">Notas (Opcional)</ion-label>
+        <ion-textarea formControlName="notes" rows="3" placeholder="Observaciones adicionales"></ion-textarea>
+      </ion-item>
+    </div>
+    
+    <div class="form-actions">
+      <ion-button type="submit" expand="block" [disabled]="visitaForm.invalid || isSubmitting">
+        {{ isSubmitting ? 'Guardando...' : 'Guardar Visita' }}
+      </ion-button>
+    </div>
+  </form>
+</ion-content>

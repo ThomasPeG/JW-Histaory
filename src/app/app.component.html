@@ -12,6 +12,7 @@
                 <ion-icon aria-hidden="true" slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
                 <ion-label>{{ p.title }}</ion-label>
               </ion-item>
+              <hr *ngIf="p.title === 'Mi Perfil'" style="border: 1px dashed #3498db; width: 85%; margin-bottom: 2rem;">
             </ion-menu-toggle>
           }
         </ion-list>
@@ -26,8 +27,19 @@
             </ion-item>
           }
         </ion-list>
+        
+        <!-- Referencia al diseñador -->
+        <div class="designer-credit">
+          <a href="https://newwwebsite.com/" target="_blank" rel="noopener noreferrer">Diseñado por neWWWebsite</a>
+        </div>
       </ion-content>
     </ion-menu>
     <ion-router-outlet id="main-content"></ion-router-outlet>
   </ion-split-pane>
 </ion-app>
+
+<!-- Agregar esto al principio del archivo -->
+<div class="network-status" *ngIf="!isOnline">
+  <ion-icon name="cloud-offline-outline"></ion-icon>
+  Modo sin conexión
+</div>

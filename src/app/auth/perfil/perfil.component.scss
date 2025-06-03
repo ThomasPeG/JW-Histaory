@@ -1,0 +1,39 @@
+.profile-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.avatar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  
+  ion-avatar {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+  }
+}
+
+.profile-info {
+  margin-bottom: 20px;
+}
+
+.profile-edit {
+  margin-bottom: 20px;
+  
+  ion-item {
+    margin-bottom: 10px;
+  }
+  
+  ion-note {
+    padding-left: 16px;
+    margin-bottom: 16px;
+    display: block;
+  }
+}
+
+.logout-button {
+  margin-top: 30px;
+}

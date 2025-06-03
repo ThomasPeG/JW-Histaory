@@ -38,6 +38,11 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'amo/:id',
+    loadComponent: () => import('./pages/amo/amo.page').then(m => m.AmoPage),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'auth',
     loadChildren: () => import('./auth/auth-routing.module').then(m => m.AuthPageRoutingModule)
   },
