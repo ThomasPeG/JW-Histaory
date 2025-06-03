@@ -12,7 +12,7 @@ import { MonthlyStats, YearlyStatsSummary } from '../models/stats.model';
   providedIn: 'root'
 })
 export class StatsService {
-  private apiUrl = `${environment.apiUrl}/stats`;
+  private apiUrl = `${environment.apiUrl}/api/stats`;
   private userId: string | null = this.authService.getUserId();
 
   constructor(

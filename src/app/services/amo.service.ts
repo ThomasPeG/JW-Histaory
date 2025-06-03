@@ -13,7 +13,7 @@ import { SyncService } from './sync.service';
   providedIn: 'root'
 })
 export class AmoService {
-  private apiUrl = `${environment.apiUrl}/amo`;
+  private apiUrl = `${environment.apiUrl}/api/amo`;
   private userId: string | null = this.authService.getUserId();
 
   constructor(
