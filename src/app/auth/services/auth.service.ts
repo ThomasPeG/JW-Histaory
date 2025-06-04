@@ -18,7 +18,7 @@ export interface AuthResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = environment.apiUrl;
+  private apiUrl = `${environment.apiUrl}/api`;
   private userKey = 'auth_user';
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasUser());
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
