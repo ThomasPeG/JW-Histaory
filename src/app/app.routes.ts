@@ -4,7 +4,7 @@ import { AuthGuard } from './auth/guards/auth.guard';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'studio',
+    redirectTo: 'auth',
     pathMatch: 'full'
   },
   {
@@ -14,7 +14,8 @@ export const routes: Routes = [
   },
   {
     path: 'studio',
-    loadComponent: () => import('./pages/studio/studio.page').then(m => m.StudioPage)
+    loadComponent: () => import('./pages/studio/studio.page').then(m => m.StudioPage),
+    canActivate: [AuthGuard]
   },
   {
     path: 'informe-mes',
