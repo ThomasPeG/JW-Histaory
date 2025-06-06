@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://jwhistoryback.onrender.com', // URL de producción
-  //apiUrl: 'http://localhost:3000' // URL de prueba local
+  //apiUrl: 'https://jwhistoryback.onrender.com', // URL de producción
+  apiUrl: 'http://localhost:3000' // URL de prueba local
 };
 
 /*

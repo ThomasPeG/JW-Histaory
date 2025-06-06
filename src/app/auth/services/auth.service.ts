@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, tap } from 'rxjs';
+import { Observable, BehaviorSubject, tap, from } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Router } from '@angular/router';
+import { Preferences } from '@capacitor/preferences';
 
 export interface RegisterData {
   name: string;
@@ -20,7 +21,7 @@ export interface AuthResponse {
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/api`;
   private userKey = 'auth_user';
-  private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasUser());
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
   constructor(private http: HttpClient, private router: Router) {
@@ -46,52 +47,54 @@ export class AuthService {
       );
   }
 
-  logout(): void {
-    localStorage.removeItem(this.userKey);
+  async logout(): Promise<void> {
+    await Preferences.remove({ key: this.userKey });
     this.isAuthenticatedSubject.next(false);
     this.router.navigate(['/auth/login']);
   }
 
-  private setSession(authResult: AuthResponse): void {
+  private async setSession(authResult: AuthResponse): Promise<void> {
     if (authResult.user) {
-      localStorage.setItem(this.userKey, JSON.stringify(authResult.user));
+      await Preferences.set({
+        key: this.userKey,
+        value: JSON.stringify(authResult.user)
+      });
       this.isAuthenticatedSubject.next(true);
     }
   }
 
-  getUser(): any {
-    const user = localStorage.getItem(this.userKey);
-    return user ? JSON.parse(user) : null;
+  async getUser(): Promise<any> {
+    const { value } = await Preferences.get({ key: this.userKey });
+    return value ? JSON.parse(value) : null;
   }
-  getUserId(): string | null {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const userData = localStorage.getItem(this.userKey);
-      if (!userData) return null;
-      
-      try {
-        const user = JSON.parse(userData);
-        return user._id;
-      } catch {
-        return null;
-      }
+  
+  async getUserId(): Promise<string | null> {
+    const { value } = await Preferences.get({ key: this.userKey });
+    if (!value) return null;
+    
+    try {
+      const user = JSON.parse(value);
+      return user._id;
+    } catch {
+      return null;
     }
-    return null;
   }
 
-  hasUser(): boolean {
-    return !!this.getUser();
+  async hasUser(): Promise<boolean> {
+    const user = await this.getUser();
+    return !!user;
   }
 
-  isLoggedIn(): boolean {
-    return this.hasUser();
+  async isLoggedIn(): Promise<boolean> {
+    return await this.hasUser();
   }
   
   // Método para verificar el estado de autenticación al iniciar
-  private checkAuthStatus(): void {
-    const isAuthenticated = this.hasUser();
+  private async checkAuthStatus(): Promise<void> {
+    const isAuthenticated = await this.hasUser();
     this.isAuthenticatedSubject.next(isAuthenticated);
     console.log('Estado de autenticación:', isAuthenticated);
     console.log('API URL:', this.apiUrl);
-    console.log('Usuario almacenado:', this.getUser());
+    console.log('Usuario almacenado:', await this.getUser());
   }
 }

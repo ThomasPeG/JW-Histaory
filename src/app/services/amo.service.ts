@@ -14,7 +14,7 @@ import { SyncService } from './sync.service';
 })
 export class AmoService {
   private apiUrl = `${environment.apiUrl}/api/amo`;
-  private userId: string | null = this.authService.getUserId();
+  private userId: string | null = null;
 
   constructor(
     private http: HttpClient,
@@ -22,14 +22,36 @@ export class AmoService {
     private networkService: NetworkService,
     private storageService: StorageService,
     private syncService: SyncService
-  ) { }
+  ) {
+    // Inicializar userId de forma asíncrona
+    this.initUserId();
+  }
+
+  // Método para inicializar el userId
+  private async initUserId(): Promise<void> {
+    this.userId = await this.authService.getUserId();
+  }
 
   // Obtener todos los amos
   getAmosByUserId(): Observable<any[]> {
+    // Si userId no está disponible, intentar obtenerlo primero
     if (!this.userId) {
-      return throwError(() => new Error('Usuario no autenticado'));
+      return from(this.authService.getUserId()).pipe(
+        switchMap(userId => {
+          if (!userId) {
+            return throwError(() => new Error('Usuario no autenticado'));
+          }
+          this.userId = userId;
+          return this.getAmosWithUserId();
+        })
+      );
     }
+    
+    return this.getAmosWithUserId();
+  }
 
+  // Método auxiliar para obtener amos con userId ya disponible
+  private getAmosWithUserId(): Observable<any[]> {
     // Si hay conexión, obtener datos del servidor y guardarlos localmente
     if (this.networkService.isOnline()) {
       return this.http.get<any[]>(`${this.apiUrl}/all/${this.userId}`).pipe(

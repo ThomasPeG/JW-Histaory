@@ -179,6 +179,9 @@ $secondary-color: var(--ion-color-secondary);
 /* Prevenir problemas de foco en páginas ocultas */
 .ion-page-hidden {
   inset: auto;
+  &:not(.ion-page-visible) {
+    inset: "";
+  }
 }
 
 /* Estilos para modales de formulario */

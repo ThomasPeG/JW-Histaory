@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, from, of, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { AuthService } from '../auth/services/auth.service';
 import { NetworkService } from './network.service';
@@ -13,21 +13,44 @@ import { MonthlyStats, YearlyStatsSummary } from '../models/stats.model';
 })
 export class StatsService {
   private apiUrl = `${environment.apiUrl}/api/stats`;
-  private userId: string | null = this.authService.getUserId();
+  private userId: string | null = null;
 
   constructor(
     private http: HttpClient,
     private authService: AuthService,
     private networkService: NetworkService,
     private storageService: StorageService
-  ) { }
+  ) {
+    // Inicializar userId de forma asíncrona
+    this.initUserId();
+  }
+
+  // Método para inicializar el userId
+  private async initUserId(): Promise<void> {
+    this.userId = await this.authService.getUserId();
+    console.log('userId inicializado:', this.userId);
+  }
 
   // Obtener estadísticas mensuales
   getMonthlyStats(year: number, month: number): Observable<MonthlyStats> {
+    // Si userId no está disponible, intentar obtenerlo primero
     if (!this.userId) {
-      return throwError(() => new Error('Usuario no autenticado'));
+      return from(this.authService.getUserId()).pipe(
+        switchMap(userId => {
+          if (!userId) {
+            return throwError(() => new Error('Usuario no autenticado'));
+          }
+          this.userId = userId;
+          return this.getMonthlyStatsWithUserId(year, month);
+        })
+      );
     }
+    
+    return this.getMonthlyStatsWithUserId(year, month);
+  }
 
+  // Método auxiliar para obtener estadísticas con userId ya disponible
+  private getMonthlyStatsWithUserId(year: number, month: number): Observable<MonthlyStats> {
     // Si hay conexión, obtener datos del servidor
     if (this.networkService.isOnline()) {
       return this.http.get<MonthlyStats>(`${this.apiUrl}/${this.userId}/${year}/${month}`).pipe(

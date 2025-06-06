@@ -5,7 +5,9 @@ const config: CapacitorConfig = {
   appName: 'JWHistory',
   webDir: 'www',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'https',
+    cleartext: true,  // Añadir esta línea
+    allowNavigation: ['jwhistoryback.onrender.com']  // Añadir esta línea
   },
   plugins: {
     StatusBar: {
