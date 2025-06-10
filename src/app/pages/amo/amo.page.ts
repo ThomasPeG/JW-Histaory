@@ -74,15 +74,6 @@ export class AmoPage implements OnInit {
       }
     });
   }
-
-  openNewVisitModal() {
-    this.isModalOpen = true;
-  }
-
-  closeModal() {
-    this.isModalOpen = false;
-  }
-
  
 
   handleVisitSubmit(visitData: Visit) {
@@ -97,7 +88,7 @@ export class AmoPage implements OnInit {
         next: (response) => {
           console.log('Visita agregada exitosamente:', response);
           this.isSubmitting = false;
-          this.closeModal();
+          this.isModalOpen = false;
           // Recargar los datos del amo
           this.loadAmoData();
         },

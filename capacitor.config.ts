@@ -1,4 +1,5 @@
 import type { CapacitorConfig } from '@capacitor/cli';
+import { KeyboardResize } from '@capacitor/keyboard';
 
 const config: CapacitorConfig = {
   appId: 'com.jwhistory.app',
@@ -14,6 +15,10 @@ const config: CapacitorConfig = {
       overlaysWebView: false,
       style: 'DARK',
       backgroundColor: '#3880ff'
+    },
+    Keyboard: {
+      resize: KeyboardResize.None,
+      resizeOnFullScreen: false, // Desactiva el redimensionamiento en pantalla completa
     }
   },
   android: {

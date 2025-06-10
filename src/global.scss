@@ -260,3 +260,22 @@ app-visita-form {
   max-height: calc(100vh - 200px); // Altura máxima para permitir scroll
   overflow-y: auto;
 }
+
+// Asegura que el contenido sea scrollable cuando aparece el teclado
+ion-content {
+  --keyboard-offset: 0px !important;
+  --overflow: auto;
+}
+
+// Ajusta la posición de los formularios
+form, ion-list {
+  padding-bottom: 150px; // Espacio adicional al final del formulario
+}
+
+// Mejora la visibilidad de los inputs activos
+ion-item.item-has-focus {
+  position: relative;
+  z-index: 2;
+  // Opcional: resalta el input activo
+  --background: var(--ion-color-light);
+}

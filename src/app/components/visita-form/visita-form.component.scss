@@ -1,37 +1,5 @@
-
-
-.form-container {
-  max-width: 800px;
-  width: 90%;
-  margin: 0 auto;
-  padding-bottom: 30px; /* Añadir espacio en la parte inferior */
-}
-
-.form-section {
-  margin-bottom: 24px;
-  background-color: var(--ion-color-light-tint);
-  border-radius: 8px;
-  padding: 16px;
-}
-
-.section-title {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 16px;
-  color: var(--ion-color-primary);
-}
-
-.custom-item {
-  --background: transparent;
-  --padding-start: 0;
-  margin-bottom: 8px;
-}
-
-.form-actions {
-  margin-top: 24px;
-}
-
-/* Asegurar que el contenido del ion-content tenga suficiente altura */
-ion-content {
-  --min-height: 100%;
+.ion-padding {
+  form {
+    margin-bottom: 45vh;
+  }
 }

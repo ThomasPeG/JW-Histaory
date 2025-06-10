@@ -30,8 +30,4 @@ export class PorInvestigarPage implements OnInit {
   ngOnInit() {
   }
 
-  // Método para abrir el diálogo de ayuda
-  openHelpDialog() {
-    this.isHelpDialogOpen = true;
-  }
 }

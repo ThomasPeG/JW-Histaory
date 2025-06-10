@@ -44,8 +44,7 @@ export class InformeMesPage implements OnInit {
   error: string | null = null;
 
   constructor(private statsService: StatsService) {
-    // Generar lista de años (desde 2020 hasta el año actual)
-    const startYear = 2020;
+    const startYear = 2025;
     for (let year = startYear; year <= this.currentYear; year++) {
       this.years.push(year);
     }
@@ -88,11 +87,6 @@ export class InformeMesPage implements OnInit {
     // });
   }
 
-  // Método para cambiar el mes o año seleccionado
-  onDateChange() {
-    this.loadStats();
-  }
-
   // Agregar estas propiedades a la clase
   isHelpDialogOpen: boolean = false;
   helpContent: string = `
@@ -106,8 +100,4 @@ export class InformeMesPage implements OnInit {
     </ul>
   `;
   
-  // Agregar este método a la clase
-  openHelpDialog() {
-    this.isHelpDialogOpen = true;
-  }
 }

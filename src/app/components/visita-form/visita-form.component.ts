@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, IonContent } from '@ionic/angular';
 import { Visit } from 'src/app/models/formularios.model';
 import { FormsModule } from '@angular/forms';
+import { UtilsService } from '../../services/utils.service';
 
 @Component({
   selector: 'app-visita-form',
@@ -13,6 +14,7 @@ import { FormsModule } from '@angular/forms';
   imports: [IonicModule, CommonModule, ReactiveFormsModule, FormsModule]
 })
 export class VisitaFormComponent implements OnInit {
+  @ViewChild(IonContent) content!: IonContent;
   @Input() isSubmitting: boolean = false;
   @Input() title: string = 'Nueva Visita';
   @Output() formSubmit = new EventEmitter<Visit>();
@@ -21,7 +23,9 @@ export class VisitaFormComponent implements OnInit {
   visitaForm: FormGroup;
   skipNextVisit: boolean = false;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(
+    private formBuilder: FormBuilder, 
+    private utilsService: UtilsService) {
     // Inicializar el formulario
     this.visitaForm = this.formBuilder.group({
       date: ['', Validators.required],
@@ -40,21 +44,10 @@ export class VisitaFormComponent implements OnInit {
   }
 
   toggleNextVisitDate() {
-    const nextVisitDateControl = this.visitaForm.get('nextVisitDate');
-    
-    if (this.skipNextVisit) {
-      // Si se selecciona "No programar", eliminar la validación y establecer valor a null
-      nextVisitDateControl?.clearValidators();
-      nextVisitDateControl?.setValue(null);
-    } else {
-      // Si se deselecciona, restaurar la validación y establecer fecha por defecto
-      nextVisitDateControl?.setValidators(Validators.required);
-      const manana = new Date();
-      manana.setDate(manana.getDate() + 1);
-      nextVisitDateControl?.setValue(manana.toISOString());
+    const nextVisitDateControl : any = this.visitaForm.get('nextVisitDate');
+    if (nextVisitDateControl) {
+      this.utilsService.toggleNextVisitDate(nextVisitDateControl, this.skipNextVisit);
     }
-    
-    nextVisitDateControl?.updateValueAndValidity();
   }
 
   resetForm() {

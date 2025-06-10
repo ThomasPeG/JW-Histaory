@@ -10,6 +10,7 @@ import { VisitaFormComponent } from '../../components/visita-form/visita-form.co
 import { Visit } from 'src/app/models/formularios.model';
 // Agregar al import de componentes
 import { HelpDialogComponent } from '../../components/help-dialog/help-dialog.component';
+import { UtilsService } from '../../services/utils.service';
 
 @Component({
   selector: 'app-revisita',
@@ -35,7 +36,8 @@ export class RevisitaPage implements OnInit {
 
   constructor(
     private amoService: AmoService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private utilsService: UtilsService
   ) {
     // Inicializar el formulario
     this.revisitaForm = this.formBuilder.group({
@@ -63,11 +65,9 @@ export class RevisitaPage implements OnInit {
     this.loading = true;
     this.amoService.getAmosByUserId().subscribe({
       next: (amos: Amo[]) => {
-        console.log('Amos cargados:', amos);
         // Ordenar los amos por fecha de próxima visita (la más cercana primero)
         this.amos = this.sortAmosByNextVisitDate(amos);
         this.filteredAmos = [...this.amos]; // Inicializar filteredAmos con todos los amos
-        console.log('Amos ordenados:', this.amos);
         this.loading = false;
       },
       error: (err: any) => {
@@ -93,61 +93,17 @@ export class RevisitaPage implements OnInit {
   }
 
   // Método para calcular los días restantes hasta la próxima visita
+  // Reemplazar los métodos existentes con llamadas al servicio
   getDiasRestantes(amo: Amo): number | null {
-    if (!amo.visit || amo.visit.length === 0 || !amo.visit[amo.visit.length - 1].nextVisitDate) {
-      return null;
-    }
-    
-    const hoy = new Date();
-    const proximaVisita = new Date(amo.visit[amo.visit.length - 1].nextVisitDate);
-    
-    // Resetear las horas para comparar solo fechas
-    hoy.setHours(0, 0, 0, 0);
-    proximaVisita.setHours(0, 0, 0, 0);
-    
-    // Calcular la diferencia en milisegundos y convertir a días
-    const diferenciaMilisegundos = proximaVisita.getTime() - hoy.getTime();
-    const diasRestantes = Math.ceil(diferenciaMilisegundos / (1000 * 60 * 60 * 24));
-    
-    return diasRestantes;
+    return this.utilsService.getDiasRestantes(amo, false);
   }
 
-  // Método para ordenar los amos por fecha de próxima visita
   sortAmosByNextVisitDate(amos: Amo[]): Amo[] {
-    return [...amos].sort((a, b) => {
-      // Verificar si hay visitas y fechas de próxima visita
-      const fechaA = a.visit && a.visit.length > 0 ? 
-        new Date(a.visit[a.visit.length - 1].nextVisitDate) : null;
-      const fechaB = b.visit && b.visit.length > 0 ? 
-        new Date(b.visit[b.visit.length - 1].nextVisitDate) : null;
-      
-      // Si ambos tienen fecha, comparar normalmente
-      if (fechaA && fechaB) {
-        return fechaA.getTime() - fechaB.getTime();
-      }
-      
-      // Si solo uno tiene fecha, ponerlo primero
-      if (fechaA) return -1;
-      if (fechaB) return 1;
-      
-      // Si ninguno tiene fecha, mantener el orden original
-      return 0;
-    });
+    return this.utilsService.sortAmosByNextVisitDate(amos, false);
   }
 
-  // Método para determinar la clase CSS según los días restantes
   getColorClase(diasRestantes: number | null): string {
-    if (diasRestantes === null) {
-      return 'sin-fecha';
-    }
-    
-    if (diasRestantes < 2) {
-      return 'dias-urgente'; // Rojo
-    } else if (diasRestantes <= 7) {
-      return 'dias-proximo'; // Amarillo
-    } else {
-      return 'dias-normal'; // Verde
-    }
+    return this.utilsService.getColorClase(diasRestantes);
   }
 
   // Métodos para el modal

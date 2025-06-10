@@ -3,6 +3,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { NetworkService } from './services/network.service';
+import { Keyboard, KeyboardResize } from '@capacitor/keyboard';
 
 @Component({
   selector: 'app-root',
@@ -35,5 +36,9 @@ export class AppComponent {
   
   
 
+  // En tu componente principal
+  ngOnInit() {
+  }
   
 }
+

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { IonicModule, IonContent } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormsModule } from '@angular/forms'; // Agregar este import
@@ -9,6 +9,7 @@ import { RouterModule } from '@angular/router';
 import { VisitaFormComponent } from '../../components/visita-form/visita-form.component';
 import { Visit } from 'src/app/models/formularios.model';
 import { HelpDialogComponent } from '../../components/help-dialog/help-dialog.component';
+import { UtilsService } from '../../services/utils.service';
 
 @Component({
   selector: 'app-primera-visita',
@@ -18,6 +19,7 @@ import { HelpDialogComponent } from '../../components/help-dialog/help-dialog.co
   imports: [IonicModule, CommonModule, ReactiveFormsModule, FormsModule, RouterModule, VisitaFormComponent, HelpDialogComponent] // Agregar FormsModule aquí
 })
 export class PrimeraVisitaPage implements OnInit {
+  @ViewChild(IonContent) content!: IonContent;
   amos: Amo[] = [];
   loading: boolean = true;
   error: string | null = null;
@@ -33,7 +35,8 @@ export class PrimeraVisitaPage implements OnInit {
 
   constructor(
     private amoService: AmoService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private utilsService: UtilsService
   ) {
     // Inicializar el formulario
     this.amoForm = this.formBuilder.group({
@@ -50,23 +53,17 @@ export class PrimeraVisitaPage implements OnInit {
       notes: ['']
     });
   }
-
-  // Añade esta propiedad a tu clase
-  presentingElement: HTMLElement | null = null;
   
   ngOnInit() {
     this.loadVisitas();
-    this.presentingElement = document.querySelector('.ion-page');
   }
 
   loadVisitas() {
     this.loading = true;
     this.amoService.getAmosByUserId().subscribe({
       next: (amos: Amo[]) => {
-        console.log('Amos cargados:', amos);
         // Ordenar los amos por fecha de próxima visita (la más cercana primero)
         this.amos = this.sortAmosByNextVisitDate(amos).filter(amo => amo.visit.length === 1);
-        console.log('Amos ordenados:', this.amos);
         this.loading = false;
       },
       error: (err: any) => {
@@ -78,58 +75,23 @@ export class PrimeraVisitaPage implements OnInit {
   }
 
   // Método para ordenar los amos por fecha de próxima visita
+  // Reemplazar los métodos existentes con llamadas al servicio
   sortAmosByNextVisitDate(amos: Amo[]): Amo[] {
-    return [...amos].sort((a, b) => {
-      // Verificar si hay visitas y fechas de próxima visita
-      const fechaA = a.visit && a.visit[0] && a.visit[0].nextVisitDate ? new Date(a.visit[0].nextVisitDate) : null;
-      const fechaB = b.visit && b.visit[0] && b.visit[0].nextVisitDate ? new Date(b.visit[0].nextVisitDate) : null;
-      
-      // Si ambos tienen fecha, comparar normalmente
-      if (fechaA && fechaB) {
-        return fechaA.getTime() - fechaB.getTime();
-      }
-      
-      // Si solo uno tiene fecha, ponerlo primero
-      if (fechaA) return -1;
-      if (fechaB) return 1;
-      
-      // Si ninguno tiene fecha, mantener el orden original
-      return 0;
-    });
+    return this.utilsService.sortAmosByNextVisitDate(amos, true);
   }
 
-  // Método para calcular los días restantes hasta la próxima visita
   getDiasRestantes(amo: Amo): number | null {
-    if (!amo.visit || !amo.visit[0] || !amo.visit[0].nextVisitDate) {
-      return null;
-    }
-    
-    const hoy = new Date();
-    const proximaVisita = new Date(amo.visit[0].nextVisitDate);
-    
-    // Resetear las horas para comparar solo fechas
-    hoy.setHours(0, 0, 0, 0);
-    proximaVisita.setHours(0, 0, 0, 0);
-    
-    // Calcular la diferencia en milisegundos y convertir a días
-    const diferenciaMilisegundos = proximaVisita.getTime() - hoy.getTime();
-    const diasRestantes = Math.ceil(diferenciaMilisegundos / (1000 * 60 * 60 * 24));
-    
-    return diasRestantes;
+    return this.utilsService.getDiasRestantes(amo, true);
   }
 
-  // Método para determinar la clase CSS según los días restantes
   getColorClase(diasRestantes: number | null): string {
-    if (diasRestantes === null) {
-      return 'sin-fecha';
-    }
-    
-    if (diasRestantes < 2) {
-      return 'dias-urgente'; // Rojo
-    } else if (diasRestantes <= 7) {
-      return 'dias-proximo'; // Amarillo
-    } else {
-      return 'dias-normal'; // Verde
+    return this.utilsService.getColorClase(diasRestantes);
+  }
+
+  toggleNextVisitDate() {
+    const nextVisitDateControl : any = this.amoForm.get('nextVisitDate');
+    if (nextVisitDateControl) {
+      this.utilsService.toggleNextVisitDate(nextVisitDateControl, this.skipNextVisit);
     }
   }
 
@@ -138,29 +100,8 @@ export class PrimeraVisitaPage implements OnInit {
     this.resetForm();
     this.isModalOpen = true;
   }
-
-  closeModal() {
-    this.isModalOpen = false;
-  }
-
   // Agregar este método para manejar el cambio en la opción "No programar"
-  toggleNextVisitDate() {
-    const nextVisitDateControl = this.amoForm.get('nextVisitDate');
-    
-    if (this.skipNextVisit) {
-      // Si se selecciona "No programar", eliminar la validación y establecer valor a null
-      nextVisitDateControl?.clearValidators();
-      nextVisitDateControl?.setValue(null);
-    } else {
-      // Si se deselecciona, restaurar la validación y establecer fecha por defecto
-      nextVisitDateControl?.setValidators(Validators.required);
-      const manana = new Date();
-      manana.setDate(manana.getDate() + 1);
-      nextVisitDateControl?.setValue(manana.toISOString());
-    }
-    
-    nextVisitDateControl?.updateValueAndValidity();
-  }
+ 
 
   resetForm() {
     // Obtener la fecha de hoy y mañana
@@ -193,29 +134,24 @@ export class PrimeraVisitaPage implements OnInit {
       });
       return;
     }
-
     this.isSubmitting = true;
-
-    // Preparar los datos para enviar al servidor
-    const formData = this.amoForm.value;
-    
     // Crear el objeto de visita
     const visitData = {
-      date: formData.date,
-      nextVisitDate: this.skipNextVisit ? null : formData.nextVisitDate, // Usar null si skipNextVisit es true
-      initialQuestion: formData.initialQuestion,
-      ownerConcern: formData.ownerConcern,
-      pendingQuestion: formData.pendingQuestion,
-      duration: formData.duration,
-      notes: formData.notes
+      date: this.amoForm.value.date,
+      nextVisitDate: this.skipNextVisit ? null : this.amoForm.value.nextVisitDate, // Usar null si skipNextVisit es true
+      initialQuestion: this.amoForm.value.initialQuestion,
+      ownerConcern: this.amoForm.value.ownerConcern,
+      pendingQuestion: this.amoForm.value.pendingQuestion,
+      duration: this.amoForm.value.duration,
+      notes: this.amoForm.value.notes
     };
 
     // Crear el objeto amo con la visita
     const amoData = {
-      names: formData.names,
-      address: formData.address,
-      personType: formData.personType,
-      personalData: formData.personalData,
+      names: this.amoForm.value.names,
+      address: this.amoForm.value.address,
+      personType: this.amoForm.value.personType,
+      personalData: this.amoForm.value.personalData,
       visit: visitData
     };
 
@@ -224,7 +160,7 @@ export class PrimeraVisitaPage implements OnInit {
       next: (response) => {
         console.log('Amo creado exitosamente:', response);
         this.isSubmitting = false;
-        this.closeModal();
+        this.isModalOpen = false;
         // Recargar la lista de amos
         this.loadVisitas();
       },
@@ -234,18 +170,6 @@ export class PrimeraVisitaPage implements OnInit {
         // Aquí podrías mostrar un mensaje de error
       }
     });
-  }
-
-  toggleDetails(visitaId: string) {
-    if (this.expandedVisita === visitaId) {
-      this.expandedVisita = null; // Colapsar si ya está expandido
-    } else {
-      this.expandedVisita = visitaId; // Expandir si está colapsado
-    }
-  }
-
-  isExpanded(amoId: string): boolean {
-    return this.expandedVisita === amoId;
   }
 
   // Métodos para el modal de revisita
@@ -303,11 +227,8 @@ export class PrimeraVisitaPage implements OnInit {
         <li><strong>Ver Detalles:</strong> Consulta toda la información de un contacto.</li>
       </ul>
     `;
-
-    // Agregar este método a la clase
-    openHelpDialog() {
-      this.isHelpDialogOpen = true;
-    }
-
 }
+
+ 
+
 

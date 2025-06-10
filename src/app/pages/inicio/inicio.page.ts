@@ -18,7 +18,7 @@ export class InicioPage implements OnInit {
   revisitas: Amo[] = [];
   estudios: number = 0;
   porInvestigar: number = 0;
-  cargando: boolean = true;
+  loading: boolean = false;
 
   constructor(private amoService: AmoService) { }
 
@@ -27,16 +27,16 @@ export class InicioPage implements OnInit {
   }
 
   cargarDatos() {
-    this.cargando = true;
+    this.loading = true;
     this.amoService.getAmosByUserId().subscribe({
       next: (data) => {
         this.amos = data;
         this.procesarDatos();
-        this.cargando = false;
+        this.loading = false;
       },
       error: (error) => {
         console.error('Error al cargar los amos:', error);
-        this.cargando = false;
+        this.loading = false;
       }
     });
   }
@@ -44,10 +44,7 @@ export class InicioPage implements OnInit {
   procesarDatos() {
     // Filtrar primeras visitas (amos con una sola visita)
     this.primerasVisitas = this.amos.filter(amo => amo.visit && amo.visit.length === 1);
-    
     // Filtrar revisitas (amos con dos o más visitas)
     this.revisitas = this.amos.filter(amo => amo.visit && amo.visit.length >= 2);
-    
-    // Aquí podrías agregar lógica para contar estudios y por investigar si tienes esa información
   }
 }

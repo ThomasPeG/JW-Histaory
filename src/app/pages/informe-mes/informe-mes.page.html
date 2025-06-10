@@ -5,7 +5,7 @@
     </ion-buttons>
     <ion-title>Informe Mensual</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="openHelpDialog()">
+      <ion-button (click)="isHelpDialogOpen = true">
         <ion-icon name="help-circle-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -31,7 +31,7 @@
             <ion-col size="6">
               <ion-item>
                 <ion-label>Mes: </ion-label>
-                <ion-select [(ngModel)]="currentMonth" (ionChange)="onDateChange()">
+                <ion-select [(ngModel)]="currentMonth" (ionChange)="loadStats()">
                   <ion-select-option *ngFor="let month of months" [value]="month.value">{{ month.name }}</ion-select-option>
                 </ion-select>
               </ion-item>
@@ -39,7 +39,7 @@
             <ion-col size="6">
               <ion-item>
                 <ion-label>Año: </ion-label>
-                <ion-select [(ngModel)]="currentYear" (ionChange)="onDateChange()">
+                <ion-select [(ngModel)]="currentYear" (ionChange)="loadStats()">
                   <ion-select-option *ngFor="let year of years" [value]="year">{{ year }}</ion-select-option>
                 </ion-select>
               </ion-item>

@@ -52,7 +52,7 @@
       <!-- Historial de visitas -->
       <h2>Historial de Visitas</h2>
       
-      <ion-button expand="block" (click)="openNewVisitModal()" class="add-visit-btn">
+      <ion-button expand="block" (click)="isModalOpen = true" class="add-visit-btn">
         <ion-icon name="add-circle-outline" slot="start"></ion-icon>
         Agregar Nueva Visita
       </ion-button>
@@ -111,7 +111,7 @@
 <!-- Modal para nueva visita (usando el componente reutilizable) -->
 <ion-modal 
   [isOpen]="isModalOpen" 
-  (didDismiss)="closeModal()"
+  (didDismiss)="isModalOpen = false"
   [initialBreakpoint]="0.95"
   handle="false"
   class="fullscreen-modal"
@@ -121,7 +121,7 @@
       [isSubmitting]="isSubmitting"
       [title]="'Nueva Visita'"
       (formSubmit)="handleVisitSubmit($event)"
-      (cancelForm)="closeModal()"
+      (cancelForm)="isModalOpen = false"
     ></app-visita-form>
   </ng-template>
 </ion-modal>

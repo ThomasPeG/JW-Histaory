@@ -18,7 +18,7 @@
   
   <div class="ion-padding">
     <div class="welcome-container">
-      <h1 class="welcome-title">Bienvenido a JW History</h1>
+      <h1 class="welcome-title">JW History</h1>
       <p class="welcome-subtitle">Tu asistente para el registro de actividad de predicación</p>
       
       <div class="stats-container">
@@ -27,11 +27,11 @@
             <ion-card-title>Resumen de Actividad</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <div *ngIf="cargando" class="loading-container">
+            <div *ngIf="loading" class="loading-container">
               <ion-spinner></ion-spinner>
               <p>Cargando datos...</p>
             </div>
-            <div *ngIf="!cargando" class="stats-grid">
+            <div *ngIf="!loading" class="stats-grid">
               <div class="stat-item">
                 <div class="stat-value">{{ primerasVisitas.length }}</div>
                 <div class="stat-label">Primeras Visitas</div>
@@ -53,44 +53,22 @@
         </ion-card>
       </div>
       
-      <div class="quick-actions">
-        <h2 class="section-title">Acciones Rápidas</h2>
-        <div class="actions-grid">
-          <ion-button expand="block" routerLink="/primera-visita" class="action-button">
-            <ion-icon name="person-add-outline" slot="start"></ion-icon>
-            Nueva Primera Visita
-          </ion-button>
-          <ion-button expand="block" routerLink="/revisita" class="action-button">
-            <ion-icon name="people-outline" slot="start"></ion-icon>
-            Revisitas
-          </ion-button>
-          <ion-button expand="block" routerLink="/studio" class="action-button">
-            <ion-icon name="business-outline" slot="start"></ion-icon>
-            Estudios
-          </ion-button>
-          <ion-button expand="block" routerLink="/informe-mes" class="action-button">
-            <ion-icon name="calendar-outline" slot="start"></ion-icon>
-            Informe del Mes
-          </ion-button>
-        </div>
-      </div>
-      
       <div class="upcoming-visits">
         <h2 class="section-title">Próximas Visitas</h2>
         <ion-card class="visits-card">
           <ion-card-content>
-            <div *ngIf="cargando" class="loading-container">
+            <div *ngIf="loading" class="loading-container">
               <ion-spinner></ion-spinner>
               <p>Cargando datos...</p>
             </div>
-            <div *ngIf="!cargando && (primerasVisitas.length === 0 && revisitas.length === 0)" class="no-visits-message">
+            <div *ngIf="!loading && (primerasVisitas.length === 0 && revisitas.length === 0)" class="no-visits-message">
               <ion-icon name="calendar-outline" class="large-icon"></ion-icon>
               <p>No hay visitas programadas próximamente</p>
               <ion-button fill="outline" routerLink="/revisita">
                 Ver todas las visitas
               </ion-button>
             </div>
-            <div *ngIf="!cargando && (primerasVisitas.length > 0 || revisitas.length > 0)">
+            <div *ngIf="!loading && (primerasVisitas.length > 0 || revisitas.length > 0)">
               <ion-list>
                 <ion-item-group *ngIf="primerasVisitas.length > 0">
                   <ion-item-divider>

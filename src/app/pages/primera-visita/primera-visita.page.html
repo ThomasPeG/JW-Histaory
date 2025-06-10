@@ -5,7 +5,7 @@
     </ion-buttons>
     <ion-title>Primera Visita</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="openHelpDialog()">
+      <ion-button (click)="isHelpDialogOpen = true">
         <ion-icon name="help-circle-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -71,14 +71,14 @@
               </td>
               <td>
                 <ion-icon 
-                  [name]="isExpanded(amo._id) ? 'chevron-up' : 'chevron-down'" 
+                  [name]="this.expandedVisita === amo._id ? 'chevron-up' : 'chevron-down'" 
                   class="expand-icon" 
-                  (click)="toggleDetails(amo._id)">
+                  (click)="this.expandedVisita === amo._id? this.expandedVisita = null : this.expandedVisita = amo._id">
                 </ion-icon>
               </td>
             </tr>
             <!-- Fila de detalles (expandible) -->
-            <tr *ngIf="isExpanded(amo._id)" class="details-row">
+            <tr *ngIf="this.expandedVisita === amo._id" class="details-row">
               <td colspan="4">
                 <div class="expanded-details">
                   <ion-grid>
@@ -123,13 +123,13 @@
   </div>
   
   <!-- Modal para nuevo amo -->
-  <ion-modal [isOpen]="isModalOpen" (didDismiss)="closeModal()" >
+  <ion-modal [isOpen]="isModalOpen" (didDismiss)="isModalOpen = false" >
     <ng-template>
       <ion-header>
         <ion-toolbar>
           <ion-title>Nuevo Amo</ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="closeModal()">
+            <ion-button (click)="isModalOpen = false">
               <ion-icon name="close"></ion-icon>
             </ion-button>
           </ion-buttons>
@@ -143,7 +143,7 @@
             
             <ion-item class="custom-item">
               <ion-label position="stacked">Nombre</ion-label>
-              <ion-input formControlName="names" type="text" placeholder="Ingrese el nombre"></ion-input>
+              <ion-input formControlName="names" type="text" placeholder="Ingrese el nombre del amo"></ion-input>
             </ion-item>
             <ion-note color="danger" *ngIf="amoForm.get('names')?.touched && amoForm.get('names')?.errors?.['required']">
               El nombre es requerido
