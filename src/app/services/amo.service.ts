@@ -109,7 +109,7 @@ export class AmoService {
     }
 
     // Generar un ID temporal para el modo offline
-    const tempId = `temp_${Date.now()}`;
+    const tempId = `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const newAmo = {
       ...amoData,
       _id: tempId,

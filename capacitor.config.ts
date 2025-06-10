@@ -6,8 +6,8 @@ const config: CapacitorConfig = {
   webDir: 'www',
   server: {
     androidScheme: 'https',
-    cleartext: true,  // Añadir esta línea
-    allowNavigation: ['jwhistoryback.onrender.com']  // Añadir esta línea
+    cleartext: true,
+    allowNavigation: ['jwhistoryback.onrender.com']
   },
   plugins: {
     StatusBar: {
@@ -15,6 +15,16 @@ const config: CapacitorConfig = {
       style: 'DARK',
       backgroundColor: '#3880ff'
     }
+  },
+  android: {
+    webContentsDebuggingEnabled: false,
+    allowMixedContent: true,
+    captureInput: true,
+    initialFocus: true
+  },
+  ios: {
+    contentInset: 'always',
+    allowsLinkPreview: false
   }
 };
 

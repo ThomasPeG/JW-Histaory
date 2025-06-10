@@ -1,108 +1,11 @@
-
-// Define variables localmente
-$border-radius-sm: 8px;
-$border-radius-md: 12px;
-$card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-
-.welcome-container {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.welcome-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--ion-color-primary);
-  margin-bottom: 0;
-}
-
-.welcome-subtitle {
-  font-size: 16px;
-  color: var(--ion-color-medium);
-  margin-top: 8px;
-}
-
-.stats-container {
-  margin-top: 16px;
-}
-
-.stats-card {
-  border-radius: $border-radius-md;
-  box-shadow: $card-shadow;
-  margin: 0;
-}
-
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
   padding: 8px;
 }
-
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 16px;
-  border-radius: $border-radius-sm;
-  background-color: var(--ion-color-light-tint);
-}
-
-.stat-value {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--ion-color-primary);
-}
-
-.stat-label {
-  font-size: 14px;
-  color: var(--ion-color-medium);
-  margin-top: 4px;
-}
-
-.section-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--ion-color-dark);
-  margin-bottom: 16px;
-}
-
 .actions-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
-}
-
-.action-button {
-  margin: 0;
-}
-
-.visits-card {
-  border-radius: $border-radius-md;
-  box-shadow: $card-shadow;
-  margin: 0;
-}
-
-.no-visits-message {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 24px 16px;
-  text-align: center;
-}
-
-.large-icon {
-  font-size: 48px;
-  color: var(--ion-color-medium);
-  margin-bottom: 16px;
-}
-
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  text-align: center;
 }

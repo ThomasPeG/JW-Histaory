@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, from, of, throwError } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { Observable} from 'rxjs';
 import { NetworkService } from './network.service';
 import { StorageService } from './storage.service';
-import { Amo, Visit } from '../models/formularios.model';
 
 @Injectable({
   providedIn: 'root'
@@ -29,15 +27,38 @@ export class SyncService {
     });
   }
 
+  // En el método loadPendingRequests
   private async loadPendingRequests() {
-    const requests = await this.storageService.get('pendingRequests');
-    if (requests) {
-      this.pendingRequests = JSON.parse(requests);
+    try {
+      // Usar IndexedDB en lugar de localStorage
+      const pendingRequestsFromDB = await this.storageService.getPendingRequests();
+      if (pendingRequestsFromDB && pendingRequestsFromDB.length > 0) {
+        this.pendingRequests = pendingRequestsFromDB;
+      } else {
+        // Compatibilidad con versiones anteriores - cargar desde localStorage
+        const requests = await this.storageService.get('pendingRequests');
+        if (requests) {
+          this.pendingRequests = JSON.parse(requests);
+          // Migrar a IndexedDB
+          await this.savePendingRequests();
+          // Eliminar de localStorage
+          await this.storageService.remove('pendingRequests');
+        }
+      }
+    } catch (error) {
+      console.error('Error al cargar solicitudes pendientes:', error);
+      this.pendingRequests = [];
     }
   }
 
   private async savePendingRequests() {
-    await this.storageService.set('pendingRequests', JSON.stringify(this.pendingRequests));
+    try {
+      await this.storageService.savePendingRequests(this.pendingRequests);
+    } catch (error) {
+      console.error('Error al guardar solicitudes pendientes:', error);
+      // Fallback a localStorage
+      await this.storageService.set('pendingRequests', JSON.stringify(this.pendingRequests));
+    }
   }
 
   // Método para agregar una solicitud a la cola

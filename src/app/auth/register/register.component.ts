@@ -61,26 +61,29 @@ export class RegisterComponent implements OnInit {
     };
     console.log('Datos de registro:', userData);
 
-    try {
-      await this.authService.register(userData).subscribe();
-      const toast = await this.toastController.create({
-        message: 'Registro exitoso. Ahora puedes iniciar sesión.',
-        duration: 2000,
-        color: 'success'
-      });
-      await toast.present();
-      this.router.navigate(['/auth/login']);
-    } catch (error) {
-      console.error('Error al registrar:', error);
-      const toast = await this.toastController.create({
-        message: 'Error al registrar. Por favor, intenta de nuevo.',
-        duration: 2000,
-        color: 'danger'
-      });
-      await toast.present();
-    } finally {
-      this.isSubmitting = false;
-    }
+    this.authService.register(userData).subscribe({
+      next: async (response) => {
+        console.log('Respuesta del servidor:', response);
+        const toast = await this.toastController.create({
+          message: 'Registro exitoso. Ahora puedes iniciar sesión.',
+          duration: 2000,
+          color: 'success'
+        });
+        await toast.present();
+        this.router.navigate(['/auth/login']);
+        this.isSubmitting = false;
+      },
+      error: async (error) => {
+        console.error('Error al registrar:', error);
+        const toast = await this.toastController.create({
+          message: error.error?.message || 'Error al registrar. Por favor, intenta de nuevo.',
+          duration: 2000,
+          color: 'danger'
+        });
+        await toast.present();
+        this.isSubmitting = false;
+      }
+    });
   }
 
   goToLogin() {

@@ -96,5 +96,10 @@ export class AuthService {
     console.log('Estado de autenticación:', isAuthenticated);
     console.log('API URL:', this.apiUrl);
     console.log('Usuario almacenado:', await this.getUser());
+    
+    // Añadir este log para depuración
+    if (!isAuthenticated) {
+      console.log('Usuario no autenticado, las rutas protegidas no se cargarán');
+    }
   }
 }

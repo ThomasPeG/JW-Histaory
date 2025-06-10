@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './auth/guards/auth.guard';
+import { AUTH_ROUTES } from './auth/auth.routes';
 
 export const routes: Routes = [
   {
@@ -44,7 +45,7 @@ export const routes: Routes = [
   },
   {
     path: 'auth',
-    loadChildren: () => import('./auth/auth-routing.module').then(m => m.AuthPageRoutingModule)
+    loadChildren: () => import('./auth/auth.routes').then(m => m.AUTH_ROUTES)
   },
   {
     path: 'folder/:id',

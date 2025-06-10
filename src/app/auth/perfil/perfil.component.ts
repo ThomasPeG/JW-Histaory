@@ -32,13 +32,17 @@ export class PerfilComponent implements OnInit {
     this.cargarDatosUsuario();
   }
 
-  cargarDatosUsuario() {
-    this.usuario = this.authService.getUser();
-    if (this.usuario) {
-      this.perfilForm.patchValue({
-        name: this.usuario.name,
-        email: this.usuario.email
-      });
+  async cargarDatosUsuario() {
+    try {
+      this.usuario = await this.authService.getUser();
+      if (this.usuario) {
+        this.perfilForm.patchValue({
+          name: this.usuario.name,
+          email: this.usuario.email
+        });
+      }
+    } catch (error) {
+      console.error('Error al cargar datos del usuario:', error);
     }
   }
 

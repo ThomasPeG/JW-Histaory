@@ -31,7 +31,10 @@
                 "output": "./svg"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss"],
+            "styles": [
+              "src/global.scss", 
+              "src/theme/variables.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -40,7 +43,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "maximumError": "9mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -54,15 +57,21 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "buildOptimizer": true,
+              "optimization": false,
+              "vendorChunk": false,
+              "extractLicenses": true,
+              "namedChunks": false,
+              "sourceMap": false
             },
             "development": {
-              "buildOptimizer": false,
+              "buildOptimizer": true,
               "optimization": false,
-              "vendorChunk": true,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true
+              "vendorChunk": false,
+              "extractLicenses": true,
+              "namedChunks": false,
+              "sourceMap": true
             },
             "ci": {
               "progress": false
@@ -81,6 +90,9 @@
             },
             "ci": {
               "progress": false
+            },
+            "options": {
+            "proxyConfig": "src/proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"

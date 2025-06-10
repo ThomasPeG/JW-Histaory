@@ -11,11 +11,10 @@ export class NoAuthGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
   
   canActivate(): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    // Verificar explícitamente si hay un usuario en localStorage
-    const user = localStorage.getItem('auth_user');
-    
-    if (!user) {
-      // Si no hay usuario, permitir acceso a las rutas de autenticación
+    return this.checkAuth();
+  }
+  private async checkAuth(): Promise<boolean | UrlTree> {
+    if (!await this.authService.isLoggedIn()) {
       return true;
     }
     

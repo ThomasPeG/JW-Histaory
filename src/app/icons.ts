@@ -15,7 +15,8 @@ import {
   closeOutline,
   personOutline,
   logOutOutline,
-  helpCircleOutline // Añadimos el icono faltante
+  helpCircleOutline,
+  personSharp
 } from 'ionicons/icons';
 
 // Registra todos los iconos que se utilizan en la aplicación
@@ -54,6 +55,7 @@ export function registerIcons() {
     'close-outline': closeOutline,
     'person-outline': personOutline,
     'log-out-outline': logOutOutline,
-    'help-circle-outline': helpCircleOutline
+    'help-circle-outline': helpCircleOutline,
+    'person-sharp': personSharp,
   });
 }
